@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #050505;
+    --foreground: #ffffff;
+
+    --color-primary: #8247e5;
+    --color-secondary: #202020;
+    --color-accent: #00ffbd;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter);
+  }
+}
+
+@layer utilities {
+
+  /* Custom Effects */
+  .glow-text {
+    text-shadow: 0 0 20px rgba(130, 71, 229, 0.5);
+  }
+
+  .glow-box {
+    box-shadow: 0 0 30px rgba(130, 71, 229, 0.15);
+  }
+
+  /* Grid Background */
+  .bg-grid-cyber {
+    background-size: 50px 50px;
+    background-image:
+      linear-gradient(to right, rgba(130, 71, 229, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(130, 71, 229, 0.1) 1px, transparent 1px);
+    mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+  }
+
+  @keyframes grid-scroll {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(40px);
+    }
+  }
+
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  .animate-grid-scroll {
+    animation: grid-scroll 4s linear infinite;
+  }
+
+  .animate-scanline {
+    animation: scanline 8s linear infinite;
+  }
+}
