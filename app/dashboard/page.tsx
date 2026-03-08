@@ -133,7 +133,7 @@ export default function DashboardPage() {
       }
 
       await requestContractCall({
-        contract: config.contractId,
+        contract: config.contractId as `${string}.${string}`,
         functionName: "set-listing-status",
         functionArgs: [Cl.uint(listingId), Cl.bool(isActive)],
       });

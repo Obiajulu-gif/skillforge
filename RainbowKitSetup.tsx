@@ -7,9 +7,9 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 type WalletNetwork = "mainnet" | "testnet" | "devnet";
 
 type ContractCallParams = {
-  contract: string;
+  contract: `${string}.${string}`;
   functionName: string;
-  functionArgs: Array<string | ClarityValue>;
+  functionArgs: ClarityValue[];
   postConditions?: Array<string | PostCondition>;
   postConditionMode?: PostConditionModeName;
 };

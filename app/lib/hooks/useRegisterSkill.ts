@@ -46,7 +46,7 @@ export function useRegisterSkill() {
         }
 
         const tx = await requestContractCall({
-          contract: config.contractId,
+          contract: config.contractId as `${string}.${string}`,
           functionName: "create-listing",
           functionArgs: [
             Cl.contractPrincipal(address, contractName),

@@ -44,7 +44,7 @@ export function usePurchaseSkill() {
         }
 
         const result = await requestContractCall({
-          contract: config.contractId,
+          contract: config.contractId as `${string}.${string}`,
           functionName: "purchase-listing",
           functionArgs: [Cl.uint(skillId), Cl.contractPrincipal(tokenParts.address, tokenParts.contractName)],
           postConditions: [
