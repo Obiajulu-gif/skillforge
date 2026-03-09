@@ -13,10 +13,11 @@ async function main() {
   const appBaseUrl = `http://127.0.0.1:${appPort}`;
 
   runCommand("clarinet", ["deployments", "generate", "--devnet"], process.cwd());
+  const planPath = path.join("deployments", deploymentPlanFilename(network));
 
   const clarinetProcess = spawnCommand(
     "clarinet",
-    ["integrate", "--no-dashboard", "--use-on-disk-deployment-plan", "-p", path.join("settings", deploymentPlanFilename(network))],
+    ["integrate", "--no-dashboard", "-p", planPath],
   );
   clarinetProcess.stdout.on("data", chunk => process.stdout.write(chunk.toString()));
   clarinetProcess.stderr.on("data", chunk => process.stderr.write(chunk.toString()));

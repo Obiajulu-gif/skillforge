@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
     ".cache/**",
     "cache/**",
     "docs/**",
-    "settings/default.*-plan.toml",
+    "deployments/**",
   ]),
 ]);
 

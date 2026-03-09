@@ -37,15 +37,16 @@ async function main() {
       return;
     }
 
+    const workspacePlanPath = path.join(workspace, "deployments", deploymentPlanFilename(network));
     runCommand(
       "clarinet",
-      ["deployments", "apply", networkFlag, "--use-on-disk-deployment-plan", "--no-dashboard"],
+      ["deployments", "apply", networkFlag, "--no-dashboard", "-p", workspacePlanPath],
       workspace,
     );
 
     const resolvedContractId =
       config.contractId ||
-      (await resolveContractIdFromPlan(path.join(workspace, "settings", deploymentPlanFilename(network)), config.contractName));
+      (await resolveContractIdFromPlan(workspacePlanPath, config.contractName));
 
     if (resolvedContractId) {
       const { address, contractName } = resolvedContractId.includes(".")
@@ -66,7 +67,7 @@ async function main() {
       projectRoot,
       {
         ...process.env,
-        DEPLOYMENT_PLAN_PATH: path.join(projectRoot, "settings", deploymentPlanFilename(network)),
+        DEPLOYMENT_PLAN_PATH: path.join(projectRoot, "deployments", deploymentPlanFilename(network)),
       },
     );
   } finally {

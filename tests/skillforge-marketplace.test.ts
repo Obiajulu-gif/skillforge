@@ -1,5 +1,5 @@
 import { initSimnet } from "@stacks/clarinet-sdk";
-import { Cl } from "@stacks/transactions";
+import { Cl, type ClarityValue } from "@stacks/transactions";
 import { beforeAll, describe, expect, it } from "vitest";
 
 let simnet: Awaited<ReturnType<typeof initSimnet>>;
@@ -11,8 +11,8 @@ beforeAll(async () => {
   simnet = await initSimnet();
 });
 
-function asString(value: any) {
-  return Cl.prettyPrint(value);
+function asString(value: unknown) {
+  return Cl.prettyPrint(value as ClarityValue);
 }
 
 function expectOkUint(value: unknown, expected: number) {

@@ -63,7 +63,7 @@ npm install
 
 ```bash
 clarinet deployments generate --devnet
-clarinet integrate --no-dashboard --use-on-disk-deployment-plan -p settings/default.devnet-plan.toml
+clarinet integrate --no-dashboard -p deployments/default.devnet-plan.yaml
 ```
 
 3. In a second terminal, run the app:

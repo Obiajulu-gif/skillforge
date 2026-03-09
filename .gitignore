@@ -18,8 +18,7 @@
 /.tools
 /.cache
 /cache
-/settings/default.*-plan.toml
-/settings/*.lock
+/deployments
 /C*Users*AppData*pnpm*
 
 # local editor files

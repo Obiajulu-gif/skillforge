@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { spawn, spawnSync } from "node:child_process";
-import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -11,7 +11,7 @@ export const projectRoot = process.cwd();
 export const clarinetManifestPath = path.join(projectRoot, "Clarinet.toml");
 
 export function deploymentPlanFilename(network: StacksNetwork) {
-  return `default.${network}-plan.toml`;
+  return `default.${network}-plan.yaml`;
 }
 
 export function resolveNetwork() {
@@ -51,6 +51,13 @@ export function spawnCommand(command: string, args: string[], cwd = projectRoot,
 }
 
 export async function createDeploymentWorkspace(network: StacksNetwork) {
+  if (network === "devnet") {
+    return {
+      workspace: projectRoot,
+      cleanup: async () => {},
+    };
+  }
+
   const tempRoot = await mkdtemp(path.join(os.tmpdir(), `skillforge-${network}-`));
 
   await cp(path.join(projectRoot, "Clarinet.toml"), path.join(tempRoot, "Clarinet.toml"));
@@ -79,8 +86,13 @@ export async function createDeploymentWorkspace(network: StacksNetwork) {
 }
 
 export async function persistDeploymentPlan(network: StacksNetwork, workspace: string) {
-  const source = path.join(workspace, "settings", deploymentPlanFilename(network));
-  const target = path.join(projectRoot, "settings", deploymentPlanFilename(network));
+  const source = path.join(workspace, "deployments", deploymentPlanFilename(network));
+  const targetDir = path.join(projectRoot, "deployments");
+  const target = path.join(targetDir, deploymentPlanFilename(network));
+  if (workspace === projectRoot) {
+    return target;
+  }
+  await mkdir(targetDir, { recursive: true });
   await cp(source, target, { force: true });
   return target;
 }

@@ -41,6 +41,7 @@
     ".tools",
     ".cache",
     "cache",
+    "deployments",
     "docs",
     "script",
     "C*Users*AppData*pnpm*"
