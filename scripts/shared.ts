@@ -64,20 +64,18 @@ export async function createDeploymentWorkspace(network: StacksNetwork) {
   await cp(path.join(projectRoot, "contracts"), path.join(tempRoot, "contracts"), { recursive: true });
   await cp(path.join(projectRoot, "settings"), path.join(tempRoot, "settings"), { recursive: true });
 
-  if (network !== "devnet") {
-    const mnemonic = process.env.DEPLOYER_MNEMONIC?.trim();
-    if (!mnemonic) {
-      throw new Error(`DEPLOYER_MNEMONIC is required for ${network} deployment flows`);
-    }
-
-    const settingsFile = path.join(tempRoot, "settings", `${capitalize(network)}.toml`);
-    const current = await readFile(settingsFile, "utf8");
-    await writeFile(
-      settingsFile,
-      current.replace("<SET VIA TEMP DEPLOY WORKSPACE>", mnemonic.replace(/"/g, '\\"')),
-      "utf8",
-    );
+  const mnemonic = process.env.DEPLOYER_MNEMONIC?.trim();
+  if (!mnemonic) {
+    throw new Error(`DEPLOYER_MNEMONIC is required for ${network} deployment flows`);
   }
+
+  const settingsFile = path.join(tempRoot, "settings", `${capitalize(network)}.toml`);
+  const current = await readFile(settingsFile, "utf8");
+  await writeFile(
+    settingsFile,
+    current.replace("<SET VIA TEMP DEPLOY WORKSPACE>", mnemonic.replace(/"/g, '\\"')),
+    "utf8",
+  );
 
   return {
     workspace: tempRoot,
