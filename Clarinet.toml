@@ -6,13 +6,14 @@ telemetry = false
 cache_dir = "./.cache"
 
 [[project.requirements]]
-contract_id = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-deposit"
-
-[[project.requirements]]
 contract_id = "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard"
 
 [contracts.skillforge-marketplace]
 path = "contracts/skillforge-marketplace.clar"
+epoch = "latest"
+
+[contracts.mock-sbtc]
+path = "contracts/mock-sbtc.clar"
 epoch = "latest"
 
 [contracts.mock-usdcx]

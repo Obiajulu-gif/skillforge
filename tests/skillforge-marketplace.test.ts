@@ -4,9 +4,6 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 let simnet: Awaited<ReturnType<typeof initSimnet>>;
 
-const sbtcAddress = "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4";
-const sbtcToken = `${sbtcAddress}.sbtc-token`;
-
 beforeAll(async () => {
   simnet = await initSimnet();
 });
@@ -35,12 +32,12 @@ function extractFirstUint(value: unknown) {
   return Number(match[1]);
 }
 
-function createSbtcListing(price: number, metadataUri: string, seller: string) {
+function createListing(tokenName: string, price: number, metadataUri: string, seller: string, deployer: string) {
   const createListing = simnet.callPublicFn(
     "skillforge-marketplace",
     "create-listing",
     [
-      Cl.contractPrincipal(sbtcAddress, "sbtc-token"),
+      Cl.contractPrincipal(deployer, tokenName),
       Cl.uint(price),
       Cl.stringAscii(metadataUri),
     ],
@@ -52,23 +49,31 @@ function createSbtcListing(price: number, metadataUri: string, seller: string) {
   return listingId;
 }
 
-function getSbtcBalance(address: string) {
-  return simnet.callReadOnlyFn(sbtcToken, "get-balance", [Cl.principal(address)], address);
+function mintToken(tokenName: string, amount: number, recipient: string, deployer: string) {
+  return simnet.callPublicFn(tokenName, "mint", [Cl.uint(amount), Cl.principal(recipient)], deployer);
+}
+
+function getTokenBalance(tokenName: string, address: string, deployer: string) {
+  return simnet.callReadOnlyFn(`${deployer}.${tokenName}`, "get-balance", [Cl.principal(address)], address);
 }
 
 describe("skillforge-marketplace", () => {
-  it("creates an sBTC listing and grants access after purchase", () => {
+  it("creates a token listing and grants access after purchase", () => {
     const accounts = simnet.getAccounts();
+    const deployer = accounts.get("deployer")!;
     const seller = accounts.get("wallet_1")!;
     const buyer = accounts.get("wallet_2")!;
 
-    const initialBuyerBalance = getSbtcBalance(buyer);
-    const listingId = createSbtcListing(750, "ipfs://skillforge/listing-1", seller);
+    const mint = mintToken("mock-sbtc", 2_000_000, buyer, deployer);
+    expectOkBool(mint.result, true);
+
+    const initialBuyerBalance = getTokenBalance("mock-sbtc", buyer, deployer);
+    const listingId = createListing("mock-sbtc", 750, "ipfs://skillforge/listing-1", seller, deployer);
 
     const purchase = simnet.callPublicFn(
       "skillforge-marketplace",
       "purchase-listing",
-      [Cl.uint(listingId), Cl.contractPrincipal(sbtcAddress, "sbtc-token")],
+      [Cl.uint(listingId), Cl.contractPrincipal(deployer, "mock-sbtc")],
       buyer,
     );
     expectOkBool(purchase.result, true);
@@ -81,21 +86,25 @@ describe("skillforge-marketplace", () => {
     );
     expectOkBool(access.result, true);
 
-    const finalBuyerBalance = getSbtcBalance(buyer);
+    const finalBuyerBalance = getTokenBalance("mock-sbtc", buyer, deployer);
     expect(extractFirstUint(finalBuyerBalance.result)).toBeLessThan(extractFirstUint(initialBuyerBalance.result));
   });
 
   it("prevents duplicate purchases for the same buyer", () => {
     const accounts = simnet.getAccounts();
+    const deployer = accounts.get("deployer")!;
     const seller = accounts.get("wallet_1")!;
     const buyer = accounts.get("wallet_2")!;
 
-    const listingId = createSbtcListing(1_000, "ipfs://skillforge/listing-2", seller);
+    const mint = mintToken("mock-sbtc", 2_000_000, buyer, deployer);
+    expectOkBool(mint.result, true);
+
+    const listingId = createListing("mock-sbtc", 1_000, "ipfs://skillforge/listing-2", seller, deployer);
 
     const firstPurchase = simnet.callPublicFn(
       "skillforge-marketplace",
       "purchase-listing",
-      [Cl.uint(listingId), Cl.contractPrincipal(sbtcAddress, "sbtc-token")],
+      [Cl.uint(listingId), Cl.contractPrincipal(deployer, "mock-sbtc")],
       buyer,
     );
     expectOkBool(firstPurchase.result, true);
@@ -103,7 +112,7 @@ describe("skillforge-marketplace", () => {
     const duplicatePurchase = simnet.callPublicFn(
       "skillforge-marketplace",
       "purchase-listing",
-      [Cl.uint(listingId), Cl.contractPrincipal(sbtcAddress, "sbtc-token")],
+      [Cl.uint(listingId), Cl.contractPrincipal(deployer, "mock-sbtc")],
       buyer,
     );
     expectErrUint(duplicatePurchase.result, 104);
@@ -115,15 +124,10 @@ describe("skillforge-marketplace", () => {
     const seller = accounts.get("wallet_1")!;
     const buyer = accounts.get("wallet_2")!;
 
-    const mintMock = simnet.callPublicFn(
-      "mock-usdcx",
-      "mint",
-      [Cl.uint(2_000_000), Cl.principal(buyer)],
-      deployer,
-    );
+    const mintMock = mintToken("mock-usdcx", 2_000_000, buyer, deployer);
     expectOkBool(mintMock.result, true);
 
-    const listingId = createSbtcListing(1_500, "ipfs://skillforge/listing-3", seller);
+    const listingId = createListing("mock-sbtc", 1_500, "ipfs://skillforge/listing-3", seller, deployer);
 
     const wrongAssetPurchase = simnet.callPublicFn(
       "skillforge-marketplace",
@@ -136,10 +140,14 @@ describe("skillforge-marketplace", () => {
 
   it("blocks purchases when a listing is unpublished", () => {
     const accounts = simnet.getAccounts();
+    const deployer = accounts.get("deployer")!;
     const seller = accounts.get("wallet_1")!;
     const buyer = accounts.get("wallet_2")!;
 
-    const listingId = createSbtcListing(1_500, "ipfs://skillforge/listing-4", seller);
+    const mint = mintToken("mock-sbtc", 2_000_000, buyer, deployer);
+    expectOkBool(mint.result, true);
+
+    const listingId = createListing("mock-sbtc", 1_500, "ipfs://skillforge/listing-4", seller, deployer);
 
     const unpublish = simnet.callPublicFn(
       "skillforge-marketplace",
@@ -152,7 +160,7 @@ describe("skillforge-marketplace", () => {
     const blockedPurchase = simnet.callPublicFn(
       "skillforge-marketplace",
       "purchase-listing",
-      [Cl.uint(listingId), Cl.contractPrincipal(sbtcAddress, "sbtc-token")],
+      [Cl.uint(listingId), Cl.contractPrincipal(deployer, "mock-sbtc")],
       buyer,
     );
     expectErrUint(blockedPurchase.result, 105);
