@@ -54,7 +54,7 @@
   (is-eq value "")
 )
 
-(define-public (create-listing (payment-asset principal) (price uint) (metadata-uri (string-ascii 256)))
+(define-public (create-listing (payment-asset <sip-010-trait>) (price uint) (metadata-uri (string-ascii 256)))
   (begin
     (asserts! (> price u0) err-invalid-price)
     (asserts! (not (is-empty-string metadata-uri)) err-invalid-metadata)
@@ -68,7 +68,7 @@
         {
           seller: tx-sender,
           metadata-uri: metadata-uri,
-          payment-asset: payment-asset,
+          payment-asset: (contract-of payment-asset),
           price: price,
           active: true,
           purchase-count: u0,
@@ -82,7 +82,7 @@
   )
 )
 
-(define-public (update-listing (listing-id uint) (payment-asset principal) (price uint) (metadata-uri (string-ascii 256)))
+(define-public (update-listing (listing-id uint) (payment-asset <sip-010-trait>) (price uint) (metadata-uri (string-ascii 256)))
   (let ((listing (try! (assert-seller listing-id))))
     (begin
       (asserts! (> price u0) err-invalid-price)
@@ -91,7 +91,7 @@
         { listing-id: listing-id }
         (merge listing
           {
-            payment-asset: payment-asset,
+            payment-asset: (contract-of payment-asset),
             price: price,
             metadata-uri: metadata-uri,
             updated-at: stacks-block-height

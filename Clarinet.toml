@@ -18,7 +18,3 @@ epoch = "latest"
 [contracts.mock-usdcx]
 path = "contracts/mock-usdcx.clar"
 epoch = "latest"
-
-[repl.analysis]
-passes = ["check_checker"]
-check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
