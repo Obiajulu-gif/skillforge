@@ -2,39 +2,123 @@
 
 @layer base {
   :root {
-    --background: #050505;
-    --foreground: #ffffff;
+    --background: #061012;
+    --foreground: #f4f7f1;
 
-    --color-primary: #8247e5;
-    --color-secondary: #202020;
-    --color-accent: #00ffbd;
+    --color-primary: #6dffc8;
+    --color-secondary: #101b1d;
+    --color-accent: #ffb168;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--background);
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top left, rgba(109, 255, 200, 0.15), transparent 26%),
+      radial-gradient(circle at top right, rgba(255, 177, 104, 0.12), transparent 24%),
+      linear-gradient(180deg, #061012 0%, #05090a 42%, #040607 100%);
     color: var(--foreground);
     font-family: var(--font-inter);
   }
 }
 
 @layer utilities {
+  .font-display {
+    font-family: var(--font-outfit), sans-serif;
+  }
 
-  /* Custom Effects */
   .glow-text {
-    text-shadow: 0 0 20px rgba(130, 71, 229, 0.5);
+    text-shadow: 0 0 18px rgba(109, 255, 200, 0.28);
   }
 
   .glow-box {
-    box-shadow: 0 0 30px rgba(130, 71, 229, 0.15);
+    box-shadow: 0 0 30px rgba(109, 255, 200, 0.12);
   }
 
-  /* Grid Background */
   .bg-grid-cyber {
-    background-size: 50px 50px;
+    background-size: 48px 48px;
     background-image:
-      linear-gradient(to right, rgba(130, 71, 229, 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(130, 71, 229, 0.1) 1px, transparent 1px);
-    mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+      linear-gradient(to right, rgba(109, 255, 200, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(109, 255, 200, 0.08) 1px, transparent 1px);
+    mask-image: radial-gradient(circle at center, black 38%, transparent 82%);
+  }
+
+  .landing-shell {
+    position: relative;
+    overflow: clip;
+  }
+
+  .landing-noise {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0.16;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 120px 120px;
+    mask-image: radial-gradient(circle at center, black 44%, transparent 88%);
+  }
+
+  .landing-panel {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+  }
+
+  .landing-panel-strong {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background:
+      linear-gradient(160deg, rgba(13, 20, 22, 0.94), rgba(7, 11, 12, 0.9)),
+      radial-gradient(circle at top left, rgba(109, 255, 200, 0.08), transparent 42%);
+    backdrop-filter: blur(24px);
+  }
+
+  .landing-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(109, 255, 200, 0.26);
+    background: rgba(109, 255, 200, 0.08);
+    padding: 0.45rem 0.85rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #b9ffe1;
+  }
+
+  .landing-divider {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, rgba(109, 255, 200, 0.35), rgba(255, 177, 104, 0.08), transparent);
+  }
+
+  .landing-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.85rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #d5e5df;
+  }
+
+  .landing-orb {
+    pointer-events: none;
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(100px);
   }
 
   @keyframes grid-scroll {
