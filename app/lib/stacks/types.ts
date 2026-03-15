@@ -29,6 +29,13 @@ export interface ListingMetadata {
   encryptedInstructions?: string;
   iv?: string;
   authTag?: string;
+  skillDocumentId?: string;
+  skillDocumentTitle?: string;
+  skillDocumentSummary?: string;
+  skillDocumentPreview?: string;
+  skillDocumentCategory?: string;
+  skillDocumentTags?: string[];
+  skillDocumentOwner?: string;
 }
 
 export interface MarketplaceListing extends ListingMetadata {

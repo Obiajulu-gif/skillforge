@@ -22,6 +22,7 @@
     "@stacks/connect": "^8.2.5",
     "@stacks/network": "^7.2.0",
     "@stacks/transactions": "^7.2.0",
+    "@supabase/supabase-js": "^2.99.1",
     "@tanstack/react-query": "^5.90.21",
     "@x402/core": "^2.6.0",
     "@x402/fetch": "^2.6.0",
@@ -29,11 +30,14 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "framer-motion": "^12.34.0",
+    "gray-matter": "^4.0.3",
     "gsap": "^3.14.2",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

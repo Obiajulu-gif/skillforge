@@ -21,6 +21,13 @@ export interface SkillWithMetadata {
   paymentAssetSymbol: string;
   paymentAssetName: string;
   paymentAssetDecimals: number;
+  skillDocumentId?: string;
+  skillDocumentTitle?: string;
+  skillDocumentSummary?: string;
+  skillDocumentPreview?: string;
+  skillDocumentCategory?: string;
+  skillDocumentTags?: string[];
+  skillDocumentOwner?: string;
 }
 
 function mapListingToSkill(listing: MarketplaceListing): SkillWithMetadata {
@@ -41,6 +48,13 @@ function mapListingToSkill(listing: MarketplaceListing): SkillWithMetadata {
     paymentAssetSymbol: listing.paymentAsset.symbol,
     paymentAssetName: listing.paymentAsset.name,
     paymentAssetDecimals: listing.paymentAsset.decimals,
+    skillDocumentId: listing.skillDocumentId,
+    skillDocumentTitle: listing.skillDocumentTitle,
+    skillDocumentSummary: listing.skillDocumentSummary,
+    skillDocumentPreview: listing.skillDocumentPreview,
+    skillDocumentCategory: listing.skillDocumentCategory,
+    skillDocumentTags: listing.skillDocumentTags,
+    skillDocumentOwner: listing.skillDocumentOwner,
   };
 }
 

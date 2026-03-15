@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-import { AlertCircle, CheckCircle2, Loader2, Search, ShieldCheck } from "lucide-react";
+import { AlertCircle, CheckCircle2, Database, Loader2, Search, ShieldCheck } from "lucide-react";
 
 import { useStacksWallet } from "@/RainbowKitSetup";
 import { getPublicClientConfig } from "@/app/lib/stacks/client";
@@ -143,6 +143,12 @@ export default function MarketplacePage() {
                 </div>
                 <h2 className="text-lg font-semibold">{skill.name}</h2>
                 <p className="mt-2 text-sm text-slate-400">{skill.description}</p>
+                {skill.skillDocumentId && (
+                  <div className="mt-3 inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-[#6dffc8]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
+                    <Database className="h-3 w-3" />
+                    SKILL.md in Supabase
+                  </div>
+                )}
                 <p className="mt-3 text-xs text-slate-500">
                   Seller: {skill.creator.slice(0, 7)}...{skill.creator.slice(-5)}
                 </p>

@@ -10,6 +10,13 @@ type SkillMetadataInput = {
   instructions?: string;
   category?: string;
   tags?: string[];
+  skillDocumentId?: string;
+  skillDocumentTitle?: string;
+  skillDocumentSummary?: string;
+  skillDocumentPreview?: string;
+  skillDocumentCategory?: string;
+  skillDocumentTags?: string[];
+  skillDocumentOwner?: string;
 };
 
 async function uploadToPinata(metadata: Record<string, unknown>) {
@@ -55,7 +62,20 @@ async function uploadToPinata(metadata: Record<string, unknown>) {
 export async function POST(req: NextRequest) {
   try {
     const payload = (await req.json()) as SkillMetadataInput;
-    const { name, description, instructions, category, tags } = payload;
+    const {
+      name,
+      description,
+      instructions,
+      category,
+      tags,
+      skillDocumentId,
+      skillDocumentTitle,
+      skillDocumentSummary,
+      skillDocumentPreview,
+      skillDocumentCategory,
+      skillDocumentTags,
+      skillDocumentOwner,
+    } = payload;
 
     if (!name || !description || !instructions) {
       return NextResponse.json(
@@ -73,6 +93,13 @@ export async function POST(req: NextRequest) {
       authTag: encrypted.authTag,
       category: category || "General",
       tags: Array.isArray(tags) ? tags : [],
+      skillDocumentId: typeof skillDocumentId === "string" ? skillDocumentId : undefined,
+      skillDocumentTitle: typeof skillDocumentTitle === "string" ? skillDocumentTitle : undefined,
+      skillDocumentSummary: typeof skillDocumentSummary === "string" ? skillDocumentSummary : undefined,
+      skillDocumentPreview: typeof skillDocumentPreview === "string" ? skillDocumentPreview : undefined,
+      skillDocumentCategory: typeof skillDocumentCategory === "string" ? skillDocumentCategory : undefined,
+      skillDocumentTags: Array.isArray(skillDocumentTags) ? skillDocumentTags : [],
+      skillDocumentOwner: typeof skillDocumentOwner === "string" ? skillDocumentOwner : undefined,
       version: "1.0.0",
       createdAt: new Date().toISOString(),
     };
