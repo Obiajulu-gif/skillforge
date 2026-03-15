@@ -33,7 +33,7 @@ export function SkillDocumentStudio({
   onLoadTemplate,
 }: SkillDocumentStudioProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -45,7 +45,7 @@ export function SkillDocumentStudio({
           {templatesLoading && <Loader2 className="h-4 w-4 animate-spin text-[#8bffd4]" />}
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
           {templateDocuments.map((document) => (
             <button
               key={document.id}
@@ -91,7 +91,7 @@ export function SkillDocumentStudio({
           />
         </div>
 
-        <div className="mt-5 grid gap-4 xl:grid-cols-2">
+        <div className="mt-5 grid gap-4 2xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           <div className="rounded-[24px] border border-white/10 bg-black/30 p-4">
             <div className="mb-3 flex items-center justify-between">
               <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">
@@ -109,14 +109,16 @@ export function SkillDocumentStudio({
             <textarea
               value={skillMarkdown}
               onChange={(event) => onSkillMarkdownChange(event.target.value)}
-              className="h-[420px] w-full rounded-[20px] border border-white/10 bg-[#05090a] px-4 py-4 font-mono text-[13px] leading-6 text-[#d7fbe9] outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
+              className="h-[340px] w-full rounded-[20px] border border-white/10 bg-[#05090a] px-4 py-4 font-mono text-[13px] leading-6 text-[#d7fbe9] outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60 xl:h-[420px]"
               spellCheck={false}
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Rendered preview</p>
-            <SkillDocumentPreview markdown={skillMarkdown} />
+            <div className="max-h-[340px] overflow-y-auto pr-1 xl:max-h-[420px]">
+              <SkillDocumentPreview markdown={skillMarkdown} />
+            </div>
           </div>
         </div>
       </div>

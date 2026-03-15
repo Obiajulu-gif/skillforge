@@ -355,147 +355,192 @@ export default function DashboardPage() {
     return allSkills.filter(skill => purchases.has(Number(skill.skillId)));
   }, [allSkills, purchases]);
 
+  const dashboardStats = [
+    { label: "Templates", value: String(templateDocuments.length), detail: "Seeded starter files" },
+    { label: "My library", value: address ? String(myDocuments.length) : "--", detail: address ? "Supabase SKILL.md files" : "Connect wallet" },
+    { label: "Listings", value: String(mySkills.length), detail: "Published on-chain" },
+    { label: "Purchases", value: String(purchasedListings.length), detail: "Unlocked by wallet" },
+  ];
+
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <div className="rounded-[30px] border border-white/10 bg-[linear-gradient(155deg,rgba(12,19,21,0.96),rgba(5,8,9,0.94))] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.28)]">
-          <h1 className="font-display text-4xl font-black uppercase tracking-[-0.05em] text-white">Creator Dashboard</h1>
-          <p className="mt-3 max-w-3xl text-base leading-8 text-[#c4d4ce]">
-            Store Clawhub-style <span className="font-semibold text-white">SKILL.md</span> files in Supabase, link them
-            into IPFS metadata, publish listings with your connected Leather wallet, and keep x402 execution locked to
-            on-chain access.
-          </p>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.12fr)_360px]">
+          <div className="space-y-6">
+            <section className="rounded-[30px] border border-white/10 bg-[linear-gradient(155deg,rgba(12,19,21,0.96),rgba(5,8,9,0.94))] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.28)]">
+              <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+                <div>
+                  <h1 className="font-display text-4xl font-black uppercase tracking-[-0.05em] text-white">
+                    Creator Dashboard
+                  </h1>
+                  <p className="mt-3 max-w-3xl text-base leading-8 text-[#c4d4ce]">
+                    Store Clawhub-style <span className="font-semibold text-white">SKILL.md</span> files in Supabase,
+                    link them into IPFS metadata, publish listings with your connected Leather wallet, and keep x402
+                    execution locked to on-chain access.
+                  </p>
 
-          <div className="mt-6 grid gap-3 md:grid-cols-3">
-            {[
-              { label: "Wallet rail", value: address ? shortAddress(address) : "Connect wallet", icon: Wallet },
-              { label: "Storage rail", value: "Supabase skill-documents", icon: Database },
-              { label: "Access rail", value: "x402 + Stacks purchase checks", icon: ShieldCheck },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="rounded-[22px] border border-white/10 bg-white/5 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-[#8bffd4]">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">{item.label}</p>
-                      <p className="mt-1 text-sm font-semibold text-white">{item.value}</p>
-                    </div>
+                  <div className="mt-6 grid gap-3 md:grid-cols-3">
+                    {[
+                      { label: "Wallet rail", value: address ? shortAddress(address) : "Connect wallet", icon: Wallet },
+                      { label: "Storage rail", value: "Supabase skill-documents", icon: Database },
+                      { label: "Access rail", value: "x402 + Stacks purchase checks", icon: ShieldCheck },
+                    ].map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={item.label} className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-[#8bffd4]">
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">
+                                {item.label}
+                              </p>
+                              <p className="mt-1 text-sm font-semibold text-white">{item.value}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {!address && (
-          <div className="mt-6 rounded-[24px] border border-yellow-500/30 bg-yellow-500/10 p-4 text-sm text-yellow-100">
-            Connect your Leather wallet to publish, store, and retrieve SKILL.md assets from your Supabase-backed library.
-          </div>
-        )}
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
+                  {dashboardStats.map((item) => (
+                    <div key={item.label} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">{item.label}</p>
+                      <p className="mt-3 text-3xl font-black uppercase tracking-[-0.05em] text-white">{item.value}</p>
+                      <p className="mt-2 text-sm text-[#b6c8c1]">{item.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Listing metadata</p>
-              <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">
-                Publish a paid skill
-              </h2>
-            </div>
-
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              <input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Skill title"
-                className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
-              />
-              <input
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
-                placeholder="Price in token base units"
-                className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
-              />
-              <select
-                value={selectedAsset}
-                onChange={(event) => setSelectedAsset(event.target.value)}
-                className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none focus:border-[#6dffc8]/60"
-              >
-                {assetOptions.map((option) => (
-                  <option key={option.contractId} value={option.contractId}>
-                    {option.label} ({option.contractId})
-                  </option>
-                ))}
-              </select>
-              <input
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder="Public marketplace description"
-                className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
-              />
-            </div>
-
-            <textarea
-              value={instructions}
-              onChange={(event) => setInstructions(event.target.value)}
-              placeholder="Private execution instructions for the x402-gated runtime"
-              className="mt-3 h-40 w-full rounded-[24px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
-            />
-
-            <button
-              disabled={!address || isRegistering}
-              onClick={() => handleCreateListing().catch(() => undefined)}
-              className="mt-5 rounded-full border border-[#ffb168]/30 bg-[linear-gradient(135deg,rgba(255,177,104,0.22),rgba(109,255,200,0.16))] px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-[0_14px_36px_rgba(255,177,104,0.14)] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isRegistering ? "Signing listing..." : "Store SKILL.md + publish listing"}
-            </button>
-
-            {metadataStatus && <p className="mt-4 text-sm text-[#d2dfda]">{metadataStatus}</p>}
-            {registerError && (
-              <p className="mt-3 inline-flex items-center gap-2 text-sm text-red-300">
-                <AlertCircle className="h-4 w-4" />
-                {registerError.message}
-              </p>
+            {!address && (
+              <div className="rounded-[24px] border border-yellow-500/30 bg-yellow-500/10 p-4 text-sm text-yellow-100">
+                Connect your Leather wallet to publish, store, and retrieve SKILL.md assets from your Supabase-backed
+                library.
+              </div>
             )}
-            {isSuccess && hash && (
-              <p className="mt-3 inline-flex items-center gap-2 text-sm text-emerald-300">
-                <CheckCircle2 className="h-4 w-4" />
-                Listing transaction confirmed.
-                <a
-                  href={`${explorerBase.replace(/\/$/, "")}/txid/${hash}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 underline underline-offset-4"
+
+            <section className="grid gap-6 2xl:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
+              <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">
+                      Listing metadata
+                    </p>
+                    <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">
+                      Publish a paid skill
+                    </h2>
+                  </div>
+                  <span className="rounded-full border border-[#ffb168]/25 bg-[#ffb168]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#ffd7ad]">
+                    Wallet + x402
+                  </span>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  <input
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder="Skill name"
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
+                  />
+                  <select
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none focus:border-[#6dffc8]/60"
+                  >
+                    {["Marketing", "DevOps", "Coding", "Sales", "Operations", "Research"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={price}
+                    onChange={(event) => setPrice(event.target.value)}
+                    placeholder="Price in token base units"
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
+                  />
+                  <select
+                    value={selectedAsset}
+                    onChange={(event) => setSelectedAsset(event.target.value)}
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none focus:border-[#6dffc8]/60"
+                  >
+                    {assetOptions.map((option) => (
+                      <option key={option.contractId} value={option.contractId}>
+                        {option.label} ({option.contractId})
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="Public marketplace description"
+                    className="md:col-span-2 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
+                  />
+                </div>
+
+                <textarea
+                  value={instructions}
+                  onChange={(event) => setInstructions(event.target.value)}
+                  placeholder="Private execution instructions for the x402-gated runtime"
+                  className="mt-3 h-40 w-full rounded-[24px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#6dffc8]/60"
+                />
+
+                <button
+                  disabled={!address || isRegistering}
+                  onClick={() => handleCreateListing().catch(() => undefined)}
+                  className="mt-5 rounded-full border border-[#ffb168]/30 bg-[linear-gradient(135deg,rgba(255,177,104,0.22),rgba(109,255,200,0.16))] px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-[0_14px_36px_rgba(255,177,104,0.14)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  View on explorer
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </p>
-            )}
-          </div>
+                  {isRegistering ? "Signing listing..." : "Store SKILL.md + publish listing"}
+                </button>
 
-          <SkillDocumentStudio
-            category={category}
-            onCategoryChange={setCategory}
-            tagsInput={tagsInput}
-            onTagsInputChange={setTagsInput}
-            skillMarkdown={skillMarkdown}
-            onSkillMarkdownChange={setSkillMarkdown}
-            onRebuildDraft={() => setSkillMarkdown(buildStarterMarkdown(name, description, category, tags))}
-            templateDocuments={templateDocuments}
-            templatesLoading={templatesLoading}
-            selectedTemplateId={selectedTemplateId}
-            onLoadTemplate={(document) => {
-              handleLoadTemplate(document).catch(() => undefined);
-            }}
-          />
-        </section>
+                {metadataStatus && <p className="mt-4 text-sm text-[#d2dfda]">{metadataStatus}</p>}
+                {registerError && (
+                  <p className="mt-3 inline-flex items-center gap-2 text-sm text-red-300">
+                    <AlertCircle className="h-4 w-4" />
+                    {registerError.message}
+                  </p>
+                )}
+                {isSuccess && hash && (
+                  <p className="mt-3 inline-flex items-center gap-2 text-sm text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Listing transaction confirmed.
+                    <a
+                      href={`${explorerBase.replace(/\/$/, "")}/txid/${hash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 underline underline-offset-4"
+                    >
+                      View on explorer
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </p>
+                )}
+              </div>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
-            <div className="flex items-center justify-between gap-4">
+              <SkillDocumentStudio
+                category={category}
+                onCategoryChange={setCategory}
+                tagsInput={tagsInput}
+                onTagsInputChange={setTagsInput}
+                skillMarkdown={skillMarkdown}
+                onSkillMarkdownChange={setSkillMarkdown}
+                onRebuildDraft={() => setSkillMarkdown(buildStarterMarkdown(name, description, category, tags))}
+                templateDocuments={templateDocuments}
+                templatesLoading={templatesLoading}
+                selectedTemplateId={selectedTemplateId}
+                onLoadTemplate={(document) => {
+                  handleLoadTemplate(document).catch(() => undefined);
+                }}
+              />
+            </section>
+
+            <section className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Supabase library</p>
                 <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">
@@ -523,10 +568,10 @@ export default function DashboardPage() {
               <p className="mt-5 text-sm text-[#b6c8c1]">No SKILL.md files stored for this wallet yet.</p>
             )}
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
               {myDocuments.map((document) => (
                 <article key={document.id} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex h-full flex-col gap-4">
                     <div className="min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8bffd4]">{document.category}</p>
                       <h3 className="mt-2 text-base font-semibold text-white">{document.title}</h3>
@@ -536,8 +581,12 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => loadDocument(document.id, { owner: address ?? undefined, label: document.title }).catch(() => undefined)}
-                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#6dffc8]/30 bg-[#6dffc8]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#b9ffe1]"
+                      onClick={() =>
+                        loadDocument(document.id, { owner: address ?? undefined, label: document.title }).catch(
+                          () => undefined,
+                        )
+                      }
+                      className="mt-auto inline-flex w-fit items-center gap-2 rounded-full border border-[#6dffc8]/30 bg-[#6dffc8]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#b9ffe1]"
                       type="button"
                     >
                       <BookOpen className="h-3.5 w-3.5" />
@@ -547,23 +596,11 @@ export default function DashboardPage() {
                 </article>
               ))}
             </div>
-          </div>
+            </section>
 
-          <SkillDocumentInspector
-            activeDocument={activeDocument}
-            activeDocumentLabel={activeDocumentLabel}
-            isDocumentLoading={isDocumentLoading}
-            documentError={documentError}
-            copiedDocument={copiedDocument}
-            onCopy={() => {
-              copyActiveDocument().catch(() => undefined);
-            }}
-          />
-        </section>
-
-        <section className="mt-8 grid gap-6 xl:grid-cols-2">
-          <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
-            <div className="mb-4 flex items-center justify-between">
+            <section className="grid gap-6 lg:grid-cols-2">
+              <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
+                <div className="mb-4 flex items-center justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">On-chain listings</p>
                 <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">My listings</h2>

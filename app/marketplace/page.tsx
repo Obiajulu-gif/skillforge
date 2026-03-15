@@ -14,6 +14,15 @@ type PurchasePayload = {
   purchases: number[];
 };
 
+function trimPromptPreview(value: string, maxLength = 180) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength).trimEnd()}...`;
+}
+
 export default function MarketplacePage() {
   const { address } = useStacksWallet();
   const { skills, isLoading, error, refetch } = useSkills();
@@ -131,9 +140,12 @@ export default function MarketplacePage() {
             const owned = purchased.has(skillId);
             const currentPending = isPending && selectedSkill === skillId;
             const price = formatTokenAmount(skill.pricePerUse, skill.paymentAssetDecimals);
+            const promptPreview = trimPromptPreview(
+              skill.skillDocumentPreview ?? skill.skillDocumentSummary ?? skill.fullDescription ?? skill.description,
+            );
 
             return (
-              <article key={skillId} className="rounded-sm border border-white/10 bg-neutral-900/40 p-5">
+              <article key={skillId} className="flex h-full flex-col rounded-sm border border-white/10 bg-neutral-900/40 p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="rounded-full border border-[#00ffbd]/40 bg-[#00ffbd]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#00ffbd]">
                     #{skillId}
@@ -147,55 +159,55 @@ export default function MarketplacePage() {
                 </div>
                 <h2 className="text-lg font-semibold">{skill.name}</h2>
                 <p className="mt-2 text-sm text-slate-400">{skill.description}</p>
-                {skill.skillDocumentId && (
-                  <div className="mt-4 rounded-2xl border border-[#6dffc8]/20 bg-[#6dffc8]/10 p-3">
-                    <div className="inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-black/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
-                      <Database className="h-3 w-3" />
-                      SKILL.md
-                    </div>
-                    <h3 className="mt-3 text-sm font-semibold text-white">
-                      {skill.skillDocumentTitle ?? `${skill.name} skill`}
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-300">
-                      {skill.skillDocumentSummary ?? skill.skillDocumentPreview ?? "This listing includes a retrievable SKILL.md document."}
-                    </p>
-                    {skill.skillDocumentTags && skill.skillDocumentTags.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {skill.skillDocumentTags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#d7fbe9]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                <div className="mt-4 rounded-2xl border border-[#6dffc8]/20 bg-[#6dffc8]/10 p-3">
+                  <div className="inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-black/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
+                    <Database className="h-3 w-3" />
+                    {skill.skillDocumentId ? "Prompt preview" : "Listing brief"}
                   </div>
-                )}
+                  <h3 className="mt-3 text-sm font-semibold text-white">
+                    {skill.skillDocumentTitle ?? `${skill.name} prompt`}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{promptPreview}</p>
+                  {(skill.skillDocumentTags ?? skill.tags).length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {(skill.skillDocumentTags ?? skill.tags).slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-white/10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#d7fbe9]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <p className="mt-3 text-xs text-slate-500">
                   Seller: {skill.creator.slice(0, 7)}...{skill.creator.slice(-5)}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
                   Uses: {skill.totalCalls.toString()} | Asset: {skill.paymentAssetSymbol}
                 </p>
-                <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-                  <div>
-                    <p className="text-lg font-bold text-white">
-                      {price} {skill.paymentAssetSymbol}
-                    </p>
+                <div className="mt-auto pt-4">
+                  <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                    <div>
+                      <p className="text-lg font-bold text-white">
+                        {price} {skill.paymentAssetSymbol}
+                      </p>
+                    </div>
+                    <button
+                      disabled={currentPending || owned || !address}
+                      onClick={() => onPurchase(skillId, skill.paymentAssetContractId)}
+                      className="rounded-sm border border-[#00ffbd]/40 bg-[#00ffbd]/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#00ffbd] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {owned ? "Purchased" : currentPending ? "Signing..." : "Buy"}
+                    </button>
                   </div>
-                  <button
-                    disabled={currentPending || owned || !address}
-                    onClick={() => onPurchase(skillId, skill.paymentAssetContractId)}
-                    className="rounded-sm border border-[#00ffbd]/40 bg-[#00ffbd]/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#00ffbd] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {owned ? "Purchased" : currentPending ? "Signing..." : "Buy"}
-                  </button>
+                  <div>
+                    <Link href={`/skills/skill-${skillId}`} className="mt-4 inline-block text-xs text-[#00ffbd] hover:underline">
+                      View details
+                    </Link>
+                  </div>
                 </div>
-                <Link href={`/skills/skill-${skillId}`} className="mt-4 inline-block text-xs text-[#00ffbd] hover:underline">
-                  View details
-                </Link>
               </article>
             );
           })}

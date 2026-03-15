@@ -80,7 +80,7 @@ export function SkillDocumentInspector({
             </div>
           )}
 
-          <div className="mt-5">
+          <div className="mt-5 max-h-[70vh] overflow-y-auto pr-1">
             <SkillDocumentPreview markdown={activeDocument.markdown} />
           </div>
         </>
