@@ -38,7 +38,7 @@ function isActivePath(pathname: string, href: string) {
 
 export function Navbar({ backLink, showDeck = false }: NavbarProps) {
     const pathname = usePathname();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [menuPathname, setMenuPathname] = useState<string | null>(null);
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -50,12 +50,17 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    useEffect(() => {
-        setIsMenuOpen(false);
-    }, [pathname]);
-
     const navItems = showDeck ? [...HOME_ITEMS, ...APP_ITEMS] : APP_ITEMS;
     const network = (process.env.NEXT_PUBLIC_STACKS_NETWORK ?? "devnet").toUpperCase();
+    const isMenuOpen = menuPathname === pathname;
+
+    const openMenu = () => {
+        setMenuPathname(pathname);
+    };
+
+    const closeMenu = () => {
+        setMenuPathname(null);
+    };
 
     return (
         <nav
@@ -131,7 +136,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                 </div>
 
                 <button
-                    onClick={() => setIsMenuOpen(true)}
+                    onClick={openMenu}
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 lg:hidden"
                     aria-label="Open navigation"
                     type="button"
@@ -144,7 +149,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                 <>
                     <button
                         aria-label="Close mobile navigation backdrop"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={closeMenu}
                         className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm lg:hidden"
                         type="button"
                     />
@@ -161,7 +166,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                             </div>
 
                             <button
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={closeMenu}
                                 className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white"
                                 aria-label="Close mobile navigation"
                                 type="button"
@@ -184,7 +189,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    onClick={() => setIsMenuOpen(false)}
+                                    onClick={closeMenu}
                                     className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition-colors hover:border-white/15 hover:bg-white/8"
                                 >
                                     {item.label}
@@ -196,7 +201,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                         <div className="mt-6">
                             <Link
                                 href="/marketplace"
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={closeMenu}
                                 className="flex items-center justify-center gap-2 rounded-2xl border border-[#ffb168]/30 bg-[linear-gradient(135deg,rgba(255,177,104,0.2),rgba(109,255,200,0.12))] px-4 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white"
                             >
                                 <Sparkles className="h-3.5 w-3.5" />
