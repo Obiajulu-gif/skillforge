@@ -62,7 +62,11 @@ export default function MarketplacePage() {
       return (
         skill.name.toLowerCase().includes(query) ||
         skill.description.toLowerCase().includes(query) ||
-        skill.tags.some((tag) => tag.toLowerCase().includes(query))
+        skill.tags.some((tag) => tag.toLowerCase().includes(query)) ||
+        (skill.skillDocumentTitle?.toLowerCase().includes(query) ?? false) ||
+        (skill.skillDocumentSummary?.toLowerCase().includes(query) ?? false) ||
+        (skill.skillDocumentPreview?.toLowerCase().includes(query) ?? false) ||
+        (skill.skillDocumentTags?.some((tag) => tag.toLowerCase().includes(query)) ?? false)
       );
     });
   }, [skills, search]);
@@ -144,9 +148,29 @@ export default function MarketplacePage() {
                 <h2 className="text-lg font-semibold">{skill.name}</h2>
                 <p className="mt-2 text-sm text-slate-400">{skill.description}</p>
                 {skill.skillDocumentId && (
-                  <div className="mt-3 inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-[#6dffc8]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
-                    <Database className="h-3 w-3" />
-                    SKILL.md in Supabase
+                  <div className="mt-4 rounded-2xl border border-[#6dffc8]/20 bg-[#6dffc8]/10 p-3">
+                    <div className="inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-black/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
+                      <Database className="h-3 w-3" />
+                      SKILL.md
+                    </div>
+                    <h3 className="mt-3 text-sm font-semibold text-white">
+                      {skill.skillDocumentTitle ?? `${skill.name} skill`}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">
+                      {skill.skillDocumentSummary ?? skill.skillDocumentPreview ?? "This listing includes a retrievable SKILL.md document."}
+                    </p>
+                    {skill.skillDocumentTags && skill.skillDocumentTags.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {skill.skillDocumentTags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-white/10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#d7fbe9]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
                 <p className="mt-3 text-xs text-slate-500">
