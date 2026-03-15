@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${outfit.variable} ${firaCode.variable} font-sans antialiased bg-background text-foreground`}>
         <RainbowKitSetup>
-          <Navbar showDeck />
+          <Navbar />
           {children}
         </RainbowKitSetup>
       </body>

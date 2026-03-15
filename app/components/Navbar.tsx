@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, ChevronRight, Menu, Sparkles, Terminal, X } from "lucide-react";
@@ -9,7 +9,6 @@ import { RainbowWalletConnect } from "@/RainbowWalletConnect";
 
 interface NavbarProps {
     backLink?: { href: string; label: string };
-    showDeck?: boolean;
 }
 
 type NavItem = {
@@ -22,42 +21,14 @@ const APP_ITEMS: NavItem[] = [
     { href: "/dashboard", label: "Creators" },
 ];
 
-const HOME_ITEMS: NavItem[] = [
-    { href: "/#overview", label: "Overview" },
-    { href: "/#protocol", label: "Protocol" },
-    { href: "/#execution", label: "Execution" },
-];
-
-function subscribeHashChange(onStoreChange: () => void) {
-    if (typeof window === "undefined") {
-        return () => {};
-    }
-
-    window.addEventListener("hashchange", onStoreChange);
-    return () => window.removeEventListener("hashchange", onStoreChange);
-}
-
-function getHashSnapshot() {
-    if (typeof window === "undefined") {
-        return "";
-    }
-
-    return window.location.hash;
-}
-
-function isActivePath(pathname: string, hash: string, href: string) {
-    if (href.startsWith("/#")) {
-        return pathname === "/" && hash === href.slice(1);
-    }
-
+function isActivePath(pathname: string, href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Navbar({ backLink, showDeck = false }: NavbarProps) {
+export function Navbar({ backLink }: NavbarProps) {
     const pathname = usePathname();
     const [menuPathname, setMenuPathname] = useState<string | null>(null);
     const [isScrolled, setIsScrolled] = useState(false);
-    const activeHash = useSyncExternalStore(subscribeHashChange, getHashSnapshot, () => "");
 
     useEffect(() => {
         const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -68,7 +39,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    const navItems = showDeck ? [...HOME_ITEMS, ...APP_ITEMS] : APP_ITEMS;
+    const navItems = APP_ITEMS;
     const network = (process.env.NEXT_PUBLIC_STACKS_NETWORK ?? "devnet").toUpperCase();
     const isMenuOpen = menuPathname === pathname;
 
@@ -107,7 +78,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                     <div className="hidden min-w-0 flex-1 items-center xl:flex">
                         <div className="flex min-w-0 max-w-full items-center gap-2 overflow-x-auto pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                             {navItems.map((item) => {
-                                const active = isActivePath(pathname, activeHash, item.href);
+                                const active = isActivePath(pathname, item.href);
 
                                 return (
                                     <Link
