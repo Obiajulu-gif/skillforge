@@ -88,8 +88,8 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                     : "border-white/5 bg-[rgba(6,11,13,0.72)] backdrop-blur-xl"
             }`}
         >
-            <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6">
-                <div className="flex min-w-0 items-center gap-4 lg:gap-8">
+            <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 sm:px-6">
+                <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-6">
                     <Link href="/" className="group flex shrink-0 items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#6dffc8]/35 bg-[linear-gradient(135deg,rgba(109,255,200,0.18),rgba(255,168,77,0.12))] text-[#9dffd9] shadow-[0_0_30px_rgba(109,255,200,0.18)] transition-transform duration-300 group-hover:-translate-y-0.5">
                             <Terminal className="h-5 w-5" />
@@ -104,39 +104,41 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
                         </div>
                     </Link>
 
-                    <div className="hidden items-center gap-2 xl:flex">
-                        {navItems.map((item) => {
-                            const active = isActivePath(pathname, activeHash, item.href);
+                    <div className="hidden min-w-0 flex-1 items-center xl:flex">
+                        <div className="flex min-w-0 max-w-full items-center gap-2 overflow-x-auto pr-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {navItems.map((item) => {
+                                const active = isActivePath(pathname, activeHash, item.href);
 
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] transition-all ${
-                                        active
-                                            ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
-                                            : "text-[#91a69f] hover:bg-white/5 hover:text-[#d8fff0]"
-                                    }`}
-                                >
-                                    {item.label}
-                                </Link>
-                            );
-                        })}
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className={`shrink-0 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] transition-all ${
+                                            active
+                                                ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                                                : "text-[#91a69f] hover:bg-white/5 hover:text-[#d8fff0]"
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 
-                <div className="hidden items-center gap-3 lg:flex">
+                <div className="hidden shrink-0 items-center justify-end gap-3 lg:flex">
                     {backLink && (
                         <Link
                             href={backLink.href}
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#95aba4] transition-colors hover:text-white"
+                            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#95aba4] transition-colors hover:text-white"
                         >
                             <ArrowLeft className="h-3.5 w-3.5" />
                             {backLink.label}
                         </Link>
                     )}
 
-                    <div className="hidden items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#d7fbe9] xl:flex">
+                    <div className="hidden items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-[#d7fbe9] 2xl:flex">
                         <span className="h-2 w-2 rounded-full bg-[#6dffc8] shadow-[0_0_16px_rgba(109,255,200,0.95)]" />
                         {network}
                         <span className="text-[#95aba4]">Live Contract Rail</span>
@@ -144,7 +146,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
 
                     <Link
                         href="/marketplace"
-                        className="hidden items-center gap-2 rounded-full border border-[#ffb168]/30 bg-[linear-gradient(135deg,rgba(255,177,104,0.24),rgba(109,255,200,0.14))] px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-[0_12px_30px_rgba(255,177,104,0.14)] transition-transform duration-300 hover:-translate-y-0.5 xl:inline-flex"
+                        className="hidden items-center gap-2 rounded-full border border-[#ffb168]/30 bg-[linear-gradient(135deg,rgba(255,177,104,0.24),rgba(109,255,200,0.14))] px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-[0_12px_30px_rgba(255,177,104,0.14)] transition-transform duration-300 hover:-translate-y-0.5 2xl:inline-flex"
                     >
                         <Sparkles className="h-3.5 w-3.5" />
                         Launch App
