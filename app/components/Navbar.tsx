@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, ChevronRight, Menu, Sparkles, Terminal, X } from "lucide-react";
@@ -28,9 +28,26 @@ const HOME_ITEMS: NavItem[] = [
     { href: "/#execution", label: "Execution" },
 ];
 
-function isActivePath(pathname: string, href: string) {
+function subscribeHashChange(onStoreChange: () => void) {
+    if (typeof window === "undefined") {
+        return () => {};
+    }
+
+    window.addEventListener("hashchange", onStoreChange);
+    return () => window.removeEventListener("hashchange", onStoreChange);
+}
+
+function getHashSnapshot() {
+    if (typeof window === "undefined") {
+        return "";
+    }
+
+    return window.location.hash;
+}
+
+function isActivePath(pathname: string, hash: string, href: string) {
     if (href.startsWith("/#")) {
-        return pathname === "/";
+        return pathname === "/" && hash === href.slice(1);
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -40,6 +57,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
     const pathname = usePathname();
     const [menuPathname, setMenuPathname] = useState<string | null>(null);
     const [isScrolled, setIsScrolled] = useState(false);
+    const activeHash = useSyncExternalStore(subscribeHashChange, getHashSnapshot, () => "");
 
     useEffect(() => {
         const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -88,7 +106,7 @@ export function Navbar({ backLink, showDeck = false }: NavbarProps) {
 
                     <div className="hidden items-center gap-2 xl:flex">
                         {navItems.map((item) => {
-                            const active = isActivePath(pathname, item.href);
+                            const active = isActivePath(pathname, activeHash, item.href);
 
                             return (
                                 <Link
