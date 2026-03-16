@@ -109,7 +109,7 @@ export default function MarketplacePage() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search listings..."
+              placeholder="Search listings or prompt text..."
               className="w-full rounded-sm border border-white/10 bg-white/5 py-2 pl-10 pr-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#00ffbd]"
             />
           </div>
@@ -162,7 +162,7 @@ export default function MarketplacePage() {
                 <div className="mt-4 rounded-2xl border border-[#6dffc8]/20 bg-[#6dffc8]/10 p-3">
                   <div className="inline-flex items-center gap-1 rounded-full border border-[#6dffc8]/25 bg-black/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#9dffd9]">
                     <Database className="h-3 w-3" />
-                    {skill.skillDocumentId ? "Prompt preview" : "Listing brief"}
+                    {skill.skillDocumentId ? "SKILL.md prompt" : "Listing brief"}
                   </div>
                   <h3 className="mt-3 text-sm font-semibold text-white">
                     {skill.skillDocumentTitle ?? `${skill.name} prompt`}
@@ -238,3 +238,4 @@ export default function MarketplacePage() {
     </main>
   );
 }
+

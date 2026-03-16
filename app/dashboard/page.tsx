@@ -577,7 +577,7 @@ export default function DashboardPage() {
                       <h3 className="mt-2 text-base font-semibold text-white">{document.title}</h3>
                       <p className="mt-2 text-sm leading-6 text-[#b6c8c1]">{document.summary}</p>
                       <p className="mt-3 text-xs text-[#7f9790]">
-                        Updated {formatDate(document.updatedAt)} · {document.lineCount} lines · owner {shortAddress(document.ownerWallet)}
+                        Updated {formatDate(document.updatedAt)} | {document.lineCount} lines | owner {shortAddress(document.ownerWallet)}
                       </p>
                     </div>
                     <button
@@ -601,111 +601,120 @@ export default function DashboardPage() {
             <section className="grid gap-6 lg:grid-cols-2">
               <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
                 <div className="mb-4 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">On-chain listings</p>
-                <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">My listings</h2>
-              </div>
-              <button
-                onClick={() => Promise.all([refetchMine(), refetchAll(), refetchDocuments()]).catch(() => undefined)}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7fbe9]"
-                type="button"
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-                Refresh
-              </button>
-            </div>
-
-            {mySkills.length === 0 && <p className="text-sm text-[#b6c8c1]">No listings published yet.</p>}
-
-            <div className="space-y-3">
-              {mySkills.map((skill) => {
-                const listingId = Number(skill.skillId);
-                const pending = Boolean(activeTxByListing[listingId]);
-
-                return (
-                  <article key={listingId} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8bffd4]">Listing #{listingId}</p>
-                        <h3 className="mt-2 text-base font-semibold text-white">{skill.name}</h3>
-                        <p className="mt-2 text-sm leading-6 text-[#b6c8c1]">{skill.description}</p>
-                        <p className="mt-3 text-xs text-[#7f9790]">
-                          {formatTokenAmount(skill.pricePerUse, skill.paymentAssetDecimals)} {skill.paymentAssetSymbol} · purchases{" "}
-                          {skill.totalCalls.toString()}
-                        </p>
-                        {skill.skillDocumentId && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              loadDocument(skill.skillDocumentId as string, {
-                                owner: address ?? undefined,
-                                label: `${skill.name} SKILL.md`,
-                              }).catch(() => undefined)
-                            }
-                            className="mt-3 inline-flex items-center gap-2 text-xs text-[#8bffd4]"
-                          >
-                            <Database className="h-3.5 w-3.5" />
-                            Open linked SKILL.md
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        disabled={pending}
-                        onClick={() => setListingState(listingId, !skill.isActive).catch(() => undefined)}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7fbe9] disabled:opacity-50"
-                        type="button"
-                      >
-                        {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                        {pending ? "Signing" : skill.isActive ? "Unpublish" : "Publish"}
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
-            <div className="mb-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Purchased access</p>
-              <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">My purchases</h2>
-            </div>
-
-            {purchasedListings.length === 0 && <p className="text-sm text-[#b6c8c1]">No purchases yet.</p>}
-
-            <div className="space-y-3">
-              {purchasedListings.map((skill) => (
-                <article key={skill.skillId.toString()} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0">
-                      <h3 className="text-base font-semibold text-white">{skill.name}</h3>
-                      <p className="mt-2 text-sm leading-6 text-[#b6c8c1]">{skill.description}</p>
-                      <p className="mt-3 text-xs text-[#7f9790]">
-                        Seller {shortAddress(skill.creator)} · x402 execution stays locked to on-chain access
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      disabled={!skill.skillDocumentId || !address}
-                      onClick={() =>
-                        loadDocument(skill.skillDocumentId as string, {
-                          buyer: address ?? undefined,
-                          listingId: Number(skill.skillId),
-                          label: `${skill.name} purchase`,
-                        }).catch(() => undefined)
-                      }
-                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#6dffc8]/30 bg-[#6dffc8]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#b9ffe1] disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <BookOpen className="h-3.5 w-3.5" />
-                      {skill.skillDocumentId ? "Retrieve SKILL.md" : "No SKILL.md"}
-                    </button>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">On-chain listings</p>
+                    <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">My listings</h2>
                   </div>
-                </article>
-              ))}
-            </div>
+                  <button
+                    onClick={() => Promise.all([refetchMine(), refetchAll(), refetchDocuments()]).catch(() => undefined)}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7fbe9]"
+                    type="button"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Refresh
+                  </button>
+                </div>
+
+                {mySkills.length === 0 && <p className="text-sm text-[#b6c8c1]">No listings published yet.</p>}
+
+                <div className="space-y-3">
+                  {mySkills.map((skill) => {
+                    const listingId = Number(skill.skillId);
+                    const pending = Boolean(activeTxByListing[listingId]);
+
+                    return (
+                      <article key={listingId} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8bffd4]">Listing #{listingId}</p>
+                            <h3 className="mt-2 text-base font-semibold text-white">{skill.name}</h3>
+                            <p className="mt-2 text-sm leading-6 text-[#b6c8c1]">{skill.description}</p>
+                            <p className="mt-3 text-xs text-[#7f9790]">
+                              {formatTokenAmount(skill.pricePerUse, skill.paymentAssetDecimals)} {skill.paymentAssetSymbol} | purchases {skill.totalCalls.toString()}
+                            </p>
+                            {skill.skillDocumentId && (
+                              <button
+                                type="button"
+                                onClick={() => loadDocument(skill.skillDocumentId as string, { owner: address ?? undefined, label: `${skill.name} SKILL.md` }).catch(() => undefined)}
+                                className="mt-3 inline-flex items-center gap-2 text-xs text-[#8bffd4]"
+                              >
+                                <Database className="h-3.5 w-3.5" />
+                                Open linked SKILL.md
+                              </button>
+                            )}
+                          </div>
+                          <button
+                            disabled={pending}
+                            onClick={() => setListingState(listingId, !skill.isActive).catch(() => undefined)}
+                            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7fbe9] disabled:opacity-50"
+                            type="button"
+                          >
+                            {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                            {pending ? "Signing" : skill.isActive ? "Unpublish" : "Publish"}
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
+                <div className="mb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Purchased access</p>
+                  <h2 className="font-display mt-3 text-xl font-black uppercase tracking-[-0.03em] text-white">My purchases</h2>
+                </div>
+
+                {purchasedListings.length === 0 && <p className="text-sm text-[#b6c8c1]">No purchases yet.</p>}
+
+                <div className="space-y-3">
+                  {purchasedListings.map((skill) => (
+                    <article key={skill.skillId.toString()} className="rounded-[22px] border border-white/10 bg-black/25 p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <h3 className="text-base font-semibold text-white">{skill.name}</h3>
+                          <p className="mt-2 text-sm leading-6 text-[#b6c8c1]">{skill.description}</p>
+                          <p className="mt-3 text-xs text-[#7f9790]">Seller {shortAddress(skill.creator)} | x402 execution stays locked to on-chain access</p>
+                        </div>
+                        <button
+                          type="button"
+                          disabled={!skill.skillDocumentId || !address}
+                          onClick={() => loadDocument(skill.skillDocumentId as string, { buyer: address ?? undefined, listingId: Number(skill.skillId), label: `${skill.name} purchase` }).catch(() => undefined)}
+                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#6dffc8]/30 bg-[#6dffc8]/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#b9ffe1] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <BookOpen className="h-3.5 w-3.5" />
+                          {skill.skillDocumentId ? "Retrieve SKILL.md" : "No SKILL.md"}
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
+
+          <aside className="space-y-6 xl:sticky xl:top-24 xl:self-start">
+            <SkillDocumentInspector
+              activeDocument={activeDocument}
+              activeDocumentLabel={activeDocumentLabel}
+              isDocumentLoading={isDocumentLoading}
+              documentError={documentError}
+              copiedDocument={copiedDocument}
+              onCopy={() => { copyActiveDocument().catch(() => undefined); }}
+            />
+
+            <section className="rounded-[28px] border border-white/10 bg-[rgba(255,255,255,0.04)] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8fa59d]">Workspace notes</p>
+              <div className="mt-4 space-y-3 text-sm leading-6 text-[#b6c8c1]">
+                <p>Template loads update the editor immediately, so you can publish from the same panel without losing context.</p>
+                <p>The marketplace now surfaces prompt previews from linked SKILL.md files, not just the short listing description.</p>
+                <p>Purchased SKILL.md files remain previewable here, but full content stays gated by connected wallet ownership.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
       </div>
     </main>
   );
 }
+
